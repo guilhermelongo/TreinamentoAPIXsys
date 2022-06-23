@@ -41,6 +41,21 @@ namespace Api.Controllers
                 return new GenericResponse<int?>().Error(HttpStatusCode.InternalServerError, exception.Message); ;
             }
         }
+        [HttpPost]
+        [Route("create")]
+
+        public async Task<GenericResponse<int?>> BookInsert([FromBody] List<PersonRequest> personRequest)
+        {
+            try
+            {
+                int? data = await _personService.BookInsert(personRequest);
+                return new GenericResponse<int?>(data).CreatedWithSucess();
+            }
+            catch (Exception exception)
+            {
+                return new GenericResponse<int?>().Error(HttpStatusCode.InternalServerError, exception.Message); ;
+            }
+        }
 
         [HttpPut]
         public async Task<GenericResponse<int>> Update([FromBody] PersonRequest personRequest)

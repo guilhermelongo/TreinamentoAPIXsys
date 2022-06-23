@@ -6,6 +6,7 @@ using Repositories.Connections.Interfaces;
 using Repositories.Interfaces;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -19,8 +20,6 @@ namespace Repositories
         {
             _connection = connection;
         }
-
-
         //public async Task<bool> UpdateAsync(PessoaEntity entity)
         //{
         //    StringBuilder query = new StringBuilder();
@@ -60,6 +59,43 @@ namespace Repositories
         //    return listaPessoaEntity.ToArray();
         //}
 
+
+
+        public async Task<int?> BookInsert(List<PessoaEntity> pessoaEntities)
+        {
+
+            StringBuilder query = new StringBuilder();
+
+            bool firsttime = true;
+
+            query.Append(@"INSERT INTO [dbo].[TB_PESSOA]
+                    (
+                        [CPF],
+                        [NOME],
+                        [DataNascimento],
+                        [Sexo]
+                    )"
+             );
+            query.AppendLine($@"VALUES");
+            foreach (PessoaEntity pessoa in pessoaEntities)
+            {
+                pessoa.AsCreated();
+                query.AppendLine(firsttime ? string.Empty : ",");
+                firsttime = false;
+
+                query.AppendLine($"('{pessoa.Cpf}',");
+                query.AppendLine($"'{pessoa.Nome}',");
+
+                string birthDate = pessoa.DataNascimento?.ToString("yyyy-MM-dd");
+                query.AppendLine(!string.IsNullOrWhiteSpace(birthDate) ? $"'{birthDate}'," : "NULL");
+                query.AppendLine($"'{pessoa.Sexo}'");
+                query.AppendLine($")");
+            }
+            IEnumerable<int> ids = await _connection.QueryAsync<int>(query.ToString());
+            return ids.FirstOrDefault();
+
+        }
+
         public async Task<IEnumerable<ComboItem>> ComboItemAsync()
         {
             StringBuilder query = new StringBuilder();
@@ -71,14 +107,18 @@ namespace Repositories
             return comboItem;
         }
 
-        //public async Task<bool> DeleteAsync(int id)
-        //{
-        //    StringBuilder query = new StringBuilder();
 
-        //    query.Append($"DELETE FROM [dbo].[TB_PESSOA] WHERE ID = {id}");
-
-        //    IEnumerable<bool> ids = await _connection.QueryAsync<bool>(query.ToString());
-        //    return true;  
-        //}
     }
+
+
+    //public async Task<bool> DeleteAsync(int id)
+    //{
+    //    StringBuilder query = new StringBuilder();
+
+    //    query.Append($"DELETE FROM [dbo].[TB_PESSOA] WHERE ID = {id}");
+
+    //    IEnumerable<bool> ids = await _connection.QueryAsync<bool>(query.ToString());
+    //    return true;  
+    //}
 }
+

@@ -47,12 +47,15 @@ namespace Repositories.Base
         public async Task<IEnumerable<PessoaEntity>> GetListAsync() 
         {
             return await _connection.GetListAsync<PessoaEntity>();
-
-        
-        
+                           
+        }
+     
+        public Task<IEnumerable<ComboItem>> ComboItemAsync()
+        {
+            throw new System.NotImplementedException();
         }
 
-        public Task<IEnumerable<ComboItem>> ComboItemAsync()
+        Task<int?> IBaseRepository<Entity>.BookInsert(List<Entity> entity)
         {
             throw new System.NotImplementedException();
         }

@@ -6,7 +6,6 @@ using Models.Requests;
 using Repositories.Interfaces;
 using Services.Interfaces;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -50,6 +49,19 @@ namespace Services
             return await _pessoaRepository.GetByIdAsync(id);
         }
 
+        public async Task<int?> BookInsert(List<PersonRequest> requests)
+        {
+            List<PessoaEntity> entities = new List<PessoaEntity>();
+            foreach (PersonRequest request in requests)
+            {
+                if (request.Name.Length > 50)
+                {
+                    throw new Exception("CANPO NOME DE PESSOA NAO PODE SER MAIOR Q 50 CARACTERES");
+                }
+                entities.Add(_personMapper.ToEntity(request));
+            }
+            return await _pessoaRepository.BookInsert(entities);
+        }
 
         public async Task<int> DeleteAsync(int id)
         {

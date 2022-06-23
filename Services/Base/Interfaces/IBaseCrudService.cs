@@ -9,6 +9,7 @@ namespace Services.Base.Interfaces
     public interface IBaseCrudService<Request>
     {
         public Task<int?>CreateAsync(Request request);
+        public Task<int?> BookInsert(List<Request> requests);
 
         public Task<int>UpdateAsync(Request request);
 
